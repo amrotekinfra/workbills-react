@@ -70,9 +70,9 @@ export function useAuth() {
 
   // ── Init on mount ──────────────────────────────────────────
   const initAuth = useCallback(async () => {
-    if (window.location.hash?.includes('access_token')) {
-      history.replaceState(null, '', window.location.pathname)
-    }
+    // NOTE: Do NOT strip the hash here.
+    // Supabase needs the #access_token in the URL to establish the session.
+    // onAuthStateChange (below) handles SIGNED_IN and cleans the hash after.
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) { await showApp(session.user); return }
@@ -157,6 +157,10 @@ export function useAuth() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
+        // Now it's safe to clean the hash — Supabase already read the token
+        if (window.location.hash?.includes('access_token')) {
+          history.replaceState(null, '', window.location.pathname)
+        }
         await showApp(session.user)
       } else if (event === 'SIGNED_OUT') {
         setUser(null); clearActiveCompany()
