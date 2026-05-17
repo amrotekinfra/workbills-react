@@ -1,0 +1,41 @@
+.panel { padding-bottom: 16px; }
+
+.tabs { display:flex; background:white; border-radius:var(--r); padding:4px; margin:12px 14px 0; gap:3px; border:1.5px solid var(--border); box-shadow:var(--shadow); }
+.tab  { flex:1; padding:8px; border:none; background:none; border-radius:10px; font-size:12px; font-weight:700; color:var(--txt3); cursor:pointer; font-family:var(--ff); transition:all .18s; }
+.tabActive { background:linear-gradient(135deg,#3a6652,#2b4f3e); color:white; box-shadow:0 2px 8px rgba(58,102,82,.3); }
+
+.kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:12px 14px; }
+.kpi  { background:white; border:1px solid var(--border); border-radius:var(--r); padding:14px 12px; position:relative; overflow:hidden; box-shadow:var(--shadow); }
+.kpiStripe { position:absolute; top:0; left:0; right:0; height:3px; }
+.kpiLabel  { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--txt3); margin-bottom:4px; }
+.kpiVal    { font-size:14px; font-weight:800; letter-spacing:-.4px; line-height:1; margin-bottom:3px; }
+.kpiCount  { font-size:10px; color:var(--txt4); }
+
+/* Bar chart */
+.chartWrap { display:flex; align-items:flex-end; gap:4px; height:100px; padding:12px 14px 4px; }
+.barCol    { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; }
+.barTrack  { flex:1; width:100%; display:flex; align-items:flex-end; }
+.barFill   { width:100%; background:var(--brand); border-radius:3px 3px 0 0; transition:height .5s cubic-bezier(.34,1.26,.64,1); min-height:2px; }
+.barToday  { background:var(--accent); }
+.barLabel  { font-size:9px; color:var(--txt4); font-weight:600; }
+.barLabelToday { color:var(--accent); font-weight:800; }
+.chartFooter { display:flex; justify-content:space-between; padding:6px 14px 12px; font-size:11px; color:var(--txt3); font-weight:600; }
+
+/* Entry rows */
+.eRow   { display:flex; align-items:center; gap:8px; padding:9px 16px; border-bottom:1px solid var(--border2); }
+.eRow:last-of-type { border-bottom:none; }
+.ePerson { font-size:13px; font-weight:700; flex-shrink:0; min-width:80px; }
+.eDesc   { flex:1; font-size:12px; color:var(--txt3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.eAmt    { font-size:13px; font-weight:800; flex-shrink:0; }
+.eDot    { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; flex-shrink:0; }
+.empty   { padding:20px; text-align:center; font-size:13px; color:var(--txt4); }
+.dayTotal{ display:flex; justify-content:space-between; align-items:center; padding:10px 16px; background:var(--accent-lt); border-top:1px solid var(--accent-md); font-size:13px; font-weight:700; color:var(--txt3); }
+.dayTotalAmt { font-size:16px; font-weight:800; color:var(--accent); }
+
+/* Table */
+.tbl { width:100%; border-collapse:collapse; font-size:12px; }
+.tbl th { padding:8px 14px; text-align:left; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--txt3); border-bottom:1.5px solid var(--border); background:var(--bg); }
+.tbl td { padding:10px 14px; border-bottom:1px solid var(--border2); }
+.tbl tr:last-child td { border-bottom:none; }
+.tblToday td { background:var(--accent-lt) !important; }
+.tblAmt { font-weight:800; color:var(--txt); }

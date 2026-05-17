@@ -1,0 +1,29 @@
+.panel { padding-bottom: 16px; }
+
+.legend { display:flex; flex-direction:column; gap:8px; padding:12px 14px; background:var(--bg); border-bottom:1px solid var(--border2); }
+.legendItem { display:flex; align-items:flex-start; gap:10px; }
+.legendDot  { width:10px; height:10px; border-radius:50%; margin-top:4px; flex-shrink:0; }
+.legendRole { font-size:12px; font-weight:800; }
+.legendNote { font-size:11px; color:var(--txt3); line-height:1.4; }
+
+.inviteCard { background:white; border-radius:var(--r); margin:12px 14px 0; border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; }
+.invBody { padding:12px 14px 16px; }
+.roleRow { display:flex; gap:6px; }
+.roleBtn { flex:1; padding:9px 6px; border:1.5px solid var(--border); border-radius:var(--rs); font-size:12px; font-weight:700; font-family:var(--ff); cursor:pointer; background:white; color:var(--txt3); transition:all .15s; }
+.roleBtnSel { box-shadow:0 2px 8px rgba(0,0,0,.12); }
+
+.memberSection { margin-top:16px; }
+.sectionHdr { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--txt3); padding:0 16px 8px; }
+.loading { padding:20px; text-align:center; color:var(--txt3); font-size:13px; }
+
+.member { display:flex; align-items:center; gap:12px; padding:12px 14px; background:white; border-bottom:1px solid var(--border2); margin:0 14px; border-radius:0; }
+.member:first-of-type { border-radius:var(--r) var(--r) 0 0; border:1px solid var(--border); border-bottom-color:var(--border2); margin-top:0; box-shadow:var(--shadow); }
+.member:last-of-type  { border-radius:0 0 var(--r) var(--r); border-bottom:1px solid var(--border); }
+.memberAv   { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800; flex-shrink:0; }
+.memberInfo { flex:1; }
+.memberEmail{ font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px; }
+.you        { font-size:10px; font-weight:800; padding:2px 7px; border-radius:100px; background:var(--brand-lt); color:var(--brand); }
+.memberRole { font-size:11px; font-weight:700; margin-top:2px; }
+.memberActions { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.roleSelect { padding:6px 8px; border:1.5px solid; border-radius:8px; font-size:11px; font-weight:700; font-family:var(--ff); background:white; cursor:pointer; outline:none; }
+.removeBtn  { width:28px; height:28px; border-radius:8px; border:1.5px solid #fecaca; background:#fef2f2; color:var(--red); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }

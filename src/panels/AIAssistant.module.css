@@ -1,0 +1,163 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 120px);
+  overflow: hidden;
+}
+
+/* Header */
+.hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.hdrLeft { display: flex; align-items: center; gap: 10px; }
+.aiIcon {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(124,58,237,.3);
+}
+.title { font-size: 15px; font-weight: 800; }
+.sub   { font-size: 11px; color: var(--txt3); font-weight: 500; }
+.clearBtn {
+  background: none; border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 6px 12px;
+  font-size: 12px; font-weight: 700; color: var(--txt3);
+  cursor: pointer; font-family: var(--ff);
+}
+.clearBtn:hover { border-color: var(--brand); color: var(--brand); }
+
+/* Messages */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+.msg { display: flex; align-items: flex-end; gap: 8px; }
+.msgUser  { flex-direction: row-reverse; }
+.msgAI    { flex-direction: row; }
+
+.aiAvatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+
+.bubble {
+  max-width: 82%;
+  padding: 10px 13px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.bubbleUser {
+  background: linear-gradient(135deg, #3a6652, #2b4f3e);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+.bubbleAI {
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--txt);
+  border-bottom-left-radius: 4px;
+  box-shadow: var(--shadow);
+}
+
+.msgText { }
+.msgText div { margin-bottom: 2px; }
+.listItem { padding-left: 12px; }
+.listItem::before { content: '• '; color: var(--brand); }
+
+/* Thinking dots */
+.dots { display: flex; gap: 4px; padding: 4px 2px; }
+.dots span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--txt3);
+  animation: bounce 1.2s infinite;
+}
+.dots span:nth-child(2) { animation-delay: .2s; }
+.dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes bounce {
+  0%,60%,100% { transform: translateY(0); opacity:.5; }
+  30%          { transform: translateY(-6px); opacity:1; }
+}
+
+/* Suggestions */
+.suggestions {
+  padding: 8px 14px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.sug {
+  text-align: left;
+  padding: 9px 14px;
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--txt2);
+  cursor: pointer;
+  font-family: var(--ff);
+  transition: all .15s;
+}
+.sug:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-lt); }
+
+/* Input row */
+.inputRow {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  background: white;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.input {
+  flex: 1;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  font-size: 14px;
+  font-family: var(--ff);
+  outline: none;
+  color: var(--txt);
+  background: var(--bg);
+  transition: border-color .15s;
+}
+.input:focus { border-color: #7c3aed; background: white; }
+.input::placeholder { color: var(--txt4); }
+.sendBtn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: transform .1s, opacity .15s;
+  box-shadow: 0 2px 8px rgba(124,58,237,.35);
+}
+.sendBtn:hover { transform: scale(1.05); }
+.sendBtn:disabled { opacity: .5; transform: none; cursor: default; }
+.sendBtnLoading { background: var(--bg); color: var(--txt3); box-shadow: none; }
+
+/* Desktop: fill the scroll container */
+@media (min-width: 720px) {
+  .panel { height: calc(100dvh - 60px); }
+}

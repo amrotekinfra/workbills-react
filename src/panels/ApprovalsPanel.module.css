@@ -1,0 +1,40 @@
+.panel { padding-bottom: 16px; }
+.section { margin-bottom: 4px; }
+.sectionHdr { display:flex; align-items:center; justify-content:space-between; padding:14px 16px 8px; }
+.sectionHdr span { font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--txt3); }
+.badge { padding:3px 9px; border-radius:100px; font-size:11px; font-weight:800; }
+.empty { padding:24px 16px; text-align:center; font-size:14px; color:var(--txt3); }
+
+.card { background:white; border-radius:var(--r); margin:6px 14px; border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; }
+.cardTop { display:flex; align-items:flex-start; gap:12px; padding:13px 14px; }
+.catEmoji { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.info { flex:1; min-width:0; }
+.person { font-size:14px; font-weight:700; margin-bottom:2px; }
+.desc   { font-size:12px; color:var(--txt3); margin-bottom:5px; }
+.meta   { display:flex; flex-wrap:wrap; gap:4px; }
+.catBadge  { font-size:10px; font-weight:700; padding:2px 7px; border-radius:100px; }
+.dateBadge { font-size:10px; font-weight:600; padding:2px 7px; border-radius:100px; background:var(--bg); color:var(--txt3); border:1px solid var(--border); }
+.payBadge  { font-size:10px; font-weight:600; padding:2px 7px; border-radius:100px; background:var(--bg); color:var(--txt3); border:1px solid var(--border); }
+.rejectReason { font-size:11px; color:var(--red); font-weight:500; margin-top:5px; }
+.cardRight { flex-shrink:0; }
+.amt { font-size:17px; font-weight:800; letter-spacing:-.5px; }
+
+.cardActions { display:flex; gap:8px; padding:0 14px 12px; }
+.approveBtn { flex:1; padding:10px; background:linear-gradient(135deg,#3a6652,#2b4f3e); color:white; border:none; border-radius:var(--rs); font-size:13px; font-weight:800; font-family:var(--ff); cursor:pointer; }
+.approveBtn:disabled { opacity:.5; cursor:not-allowed; }
+.rejectBtn2 { flex:1; padding:10px; background:#fef2f2; color:var(--red); border:1.5px solid #fecaca; border-radius:var(--rs); font-size:13px; font-weight:800; font-family:var(--ff); cursor:pointer; }
+.rejectBtn2:disabled { opacity:.5; }
+
+/* Modal */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:flex-end; justify-content:center; z-index:200; }
+.modal   { background:white; border-radius:var(--r) var(--r) 0 0; width:100%; max-width:480px; animation:rise .25s ease; }
+.mHdr   { display:flex; justify-content:space-between; align-items:center; padding:18px 20px 14px; border-bottom:1px solid var(--border2); }
+.mHdr span { font-size:16px; font-weight:800; }
+.mClose { background:none; border:none; font-size:18px; cursor:pointer; color:var(--txt3); }
+.mBody  { padding:16px 20px; }
+.mInfo  { font-size:13px; color:var(--txt3); margin-bottom:10px; }
+.textarea { width:100%; border:1.5px solid var(--border); border-radius:var(--rs); padding:10px 12px; font-size:14px; font-family:var(--ff); resize:none; outline:none; }
+.textarea:focus { border-color:var(--red); }
+.mFoot  { display:flex; gap:10px; padding:0 20px 24px; }
+.mFoot button { flex:1; }
+.rejectBtn { padding:12px; background:var(--red); color:white; border:none; border-radius:var(--rs); font-size:14px; font-weight:800; font-family:var(--ff); cursor:pointer; }

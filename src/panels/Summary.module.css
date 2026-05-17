@@ -1,0 +1,39 @@
+.panel { padding-bottom: 16px; }
+.tabs { display:flex; background:white; border-radius:var(--r); padding:4px; margin:12px 14px 0; gap:3px; border:1.5px solid var(--border); box-shadow:var(--shadow); }
+.tab  { flex:1; padding:9px 8px; border:none; background:none; border-radius:10px; font-size:12px; font-weight:700; color:var(--txt3); cursor:pointer; font-family:var(--ff); transition:all .18s; }
+.tabA { background:linear-gradient(135deg,#3a6652,#2b4f3e); color:white; box-shadow:0 2px 8px rgba(58,102,82,.3); }
+.totalCard { text-align:center; background:linear-gradient(135deg,var(--accent-lt),#fff8ec); border:1.5px solid var(--accent-md); border-radius:var(--r); margin:12px 14px; padding:20px; }
+.tl { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.7px; color:var(--accent-d); }
+.tv { font-size:36px; font-weight:800; letter-spacing:-2px; color:var(--accent); margin:4px 0; }
+.ts { font-size:12px; color:var(--txt3); }
+.pRow { display:flex; align-items:center; gap:12px; padding:12px 18px; border-bottom:1px solid var(--border2); }
+.pAv  { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0; }
+.pInfo { flex:1; }
+.pName { font-size:14px; font-weight:700; margin-bottom:5px; }
+.pBar  { height:6px; background:var(--bg); border-radius:4px; overflow:hidden; border:1px solid var(--border); }
+.pFill { height:100%; border-radius:4px; transition:width .7s cubic-bezier(.34,1.26,.64,1); }
+.pAmt  { text-align:right; flex-shrink:0; }
+.settle { padding:14px 18px; background:var(--brand-lt); border-top:1px solid var(--brand-md); }
+.sEven { text-align:center; font-size:14px; font-weight:700; color:var(--green); }
+.sResult { text-align:center; }
+.sMsg  { font-size:14px; font-weight:700; color:var(--txt); margin:4px 0; }
+.sAmt  { font-size:26px; font-weight:800; color:var(--accent); letter-spacing:-1px; }
+.legend { padding:0 14px 14px; display:flex; flex-direction:column; gap:6px; }
+.li { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; background:var(--bg); border:1px solid var(--border); cursor:pointer; transition:all .15s; }
+.liA { background:white; border-color:var(--brand); }
+.dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.ln  { flex:1; font-size:13px; font-weight:600; }
+.lp  { font-size:11px; font-weight:700; color:var(--txt3); }
+.la  { font-size:13px; font-weight:800; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:14px; }
+
+
+/* ── Desktop responsive ── */
+@media (min-width: 720px) {
+  .panel { padding: 0 20px 24px; }
+  .tabs { margin: 16px 0 0; }
+  .totalCard { margin: 16px 0; padding: 24px 32px; }
+  .tv { font-size: 44px; }
+  .grid { grid-template-columns: repeat(4,1fr); gap: 14px; padding: 16px 0; }
+  .legend { padding: 0 0 16px; }
+}

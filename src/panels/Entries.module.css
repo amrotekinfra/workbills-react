@@ -1,0 +1,87 @@
+.panel { padding-bottom: 80px; }
+
+/* Search bar */
+.search { display:flex; align-items:center; gap:8px; padding:10px 14px; background:white; border-bottom:1px solid var(--border2); position:sticky; top:0; z-index:10; }
+.search span { font-size:15px; color:var(--txt3); flex-shrink:0; }
+.searchIn { flex:1; border:none; outline:none; font-size:14px; font-family:var(--ff); color:var(--txt); background:transparent; min-width:0; }
+.searchIn::placeholder { color:var(--txt4); }
+.clr    { background:none; border:none; font-size:14px; color:var(--txt4); cursor:pointer; padding:2px; }
+.refBtn { background:none; border:none; font-size:16px; color:var(--txt3); cursor:pointer; padding:2px; }
+
+/* Month chips */
+.chips { display:flex; gap:6px; padding:10px 14px 6px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.chips::-webkit-scrollbar { display:none; }
+.chip { padding:5px 12px; border:1px solid var(--border); border-radius:100px; font-size:11px; font-weight:700; color:var(--txt3); background:white; cursor:pointer; white-space:nowrap; font-family:var(--ff); transition:all .15s; flex-shrink:0; }
+.chipOn { background:var(--brand); border-color:var(--brand); color:white; }
+
+/* Partner tabs */
+.pTabs { display:flex; background:white; border-radius:var(--r); padding:4px; margin:8px 14px 4px; gap:3px; border:1.5px solid var(--border); box-shadow:var(--shadow); }
+.pTab  { flex:1; padding:8px; border:none; background:none; border-radius:10px; font-size:12px; font-weight:700; color:var(--txt3); cursor:pointer; font-family:var(--ff); transition:all .18s; }
+.pTabOn { background:linear-gradient(135deg,#3a6652,#2b4f3e); color:white; box-shadow:0 2px 8px rgba(58,102,82,.3); }
+
+/* Summary strip */
+.strip { display:flex; justify-content:space-between; align-items:center; padding:8px 16px; font-size:12px; color:var(--txt3); border-bottom:1px solid var(--border2); }
+.stripCt  { font-weight:600; }
+.stripTot { font-weight:800; color:var(--accent); font-size:14px; }
+
+/* Bulk bar */
+.bulkBar { display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--brand-lt); border-bottom:1px solid var(--brand-md); }
+.bClose  { background:none; border:none; font-size:16px; cursor:pointer; color:var(--txt2); }
+.bCt     { font-size:13px; font-weight:700; color:var(--brand); flex:1; }
+.bBtn    { padding:6px 12px; border-radius:var(--rs); font-size:12px; font-weight:700; font-family:var(--ff); cursor:pointer; border:1.5px solid var(--border); background:white; color:var(--txt2); }
+.bDel    { border-color:#fecaca; background:#fef2f2; color:var(--red); }
+
+/* Date group */
+.dhdr  { display:flex; justify-content:space-between; align-items:center; padding:8px 16px 4px; }
+.dLabel { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--txt3); }
+.dTot  { font-size:12px; font-weight:800; color:var(--accent); }
+
+/* Row wrapper — enables swipe reveal */
+.rowWrap { position:relative; overflow:hidden; background:var(--bg); }
+
+/* Swipe-behind actions */
+.swipe { position:absolute; right:0; top:0; bottom:0; display:flex; align-items:stretch; z-index:0; }
+.aEdit { width:80px; border:none; font-size:18px; cursor:pointer; font-family:var(--ff); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; background:#dbeafe; color:#1d4ed8; }
+.aDel  { width:80px; border:none; font-size:18px; cursor:pointer; font-family:var(--ff); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; background:#fef2f2; color:var(--red); }
+.aEdit span, .aDel span { font-size:9px; font-weight:800; }
+
+/* Entry row */
+.row { position:relative; z-index:1; display:flex; align-items:center; gap:12px; padding:12px 16px; background:white; border-bottom:1px solid var(--border2); transition:transform .25s cubic-bezier(.25,.46,.45,.94); cursor:pointer; will-change:transform; }
+.rowSel  { background:var(--brand-lt) !important; }
+.rowBulk { user-select:none; }
+
+/* Bulk checkbox */
+.check    { width:22px; height:22px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; }
+.checkSel { background:var(--brand); border-color:var(--brand); color:white; }
+
+/* Category emoji bubble */
+.catEm { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+
+/* Main info */
+.info   { flex:1; min-width:0; }
+.person { font-size:14px; font-weight:700; color:var(--txt); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.desc   { font-size:12px; color:var(--txt3); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.meta   { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
+.catTag { display:inline-flex; align-items:center; gap:3px; font-size:10px; font-weight:700; padding:2px 7px; border-radius:100px; }
+.payTag { font-size:10px; font-weight:700; padding:2px 7px; border-radius:100px; background:var(--bg); color:var(--txt3); border:1px solid var(--border); }
+.pend   { font-size:10px; font-weight:700; padding:2px 7px; border-radius:100px; background:#eff6ff; color:#2563eb; }
+.rej    { font-size:10px; font-weight:700; padding:2px 7px; border-radius:100px; background:#fef2f2; color:var(--red); }
+
+/* Right: amount + partner dot */
+.right  { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+.amount { font-size:15px; font-weight:800; letter-spacing:-.3px; color:var(--txt); }
+.pdot   { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; }
+
+
+/* ── Desktop responsive ── */
+@media (min-width: 720px) {
+  .row { padding: 14px 20px; gap: 16px; }
+  .search { padding: 12px 20px; }
+  .chips { padding: 10px 20px 8px; }
+  .pTabs { margin: 8px 20px 4px; }
+  .strip { padding: 8px 20px; }
+  .dhdr  { padding: 10px 20px 6px; }
+  .person { font-size: 15px; }
+  .amount { font-size: 16px; }
+  .catTag, .payTag, .pend, .rej { font-size: 11px; padding: 3px 9px; }
+}
