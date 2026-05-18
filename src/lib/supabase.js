@@ -75,7 +75,18 @@ export const decodeEntry = row => {
   if (desc.includes(' | 📎 ')) { const p = desc.split(' | 📎 '); photoUrl = p[1]; desc = p[0] }
   if (desc.includes(' | 💳 ')) { const p = desc.split(' | 💳 '); payMode  = p[1]; desc = p[0] }
   if (desc.includes(' | 📝 ')) { const p = desc.split(' | 📝 '); notes    = p[1]; desc = p[0] }
-  return { ...row, description: desc, notes, payMode, photoUrl }
+
+  // Normalise date to DD/MM/YYYY regardless of how it was stored
+  // Handles: "2026-05-18" (ISO), "2026-05-18T..." (ISO+time), "18/05/2026" (already correct)
+  let date = row.date || ''
+  if (date && !date.includes('/')) {
+    // ISO format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS
+    const iso = date.split('T')[0]          // "2026-05-18"
+    const [y, m, d] = iso.split('-')
+    if (y && m && d) date = `${d}/${m}/${y}` // "18/05/2026"
+  }
+
+  return { ...row, date, description: desc, notes, payMode, photoUrl }
 }
 
 /** Encode metadata back into description */
