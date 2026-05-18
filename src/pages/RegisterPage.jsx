@@ -28,42 +28,105 @@ export default function RegisterPage() {
 
   const handleName = val => {
     setName(val)
-    const sl = val.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').slice(0,40)
+    const sl = val.toLowerCase()
+      .replace(/[^a-z0-9\s-]/g,'')
+      .replace(/\s+/g,'-')
+      .replace(/-+/g,'-')
+      .slice(0,40)
     setSlug(sl)
-    checkSlug(sl)
+    if (sl.length >= 3) checkSlug(sl)
   }
 
   const checkSlug = async val => {
-    if (!val || val.length < 3) { setSlugMsg({ ok:false, msg:'Min 3 characters' }); return }
-    if (!/^[a-z0-9][a-z0-9-]+[a-z0-9]$/.test(val)) { setSlugMsg({ ok:false, msg:'Lowercase, numbers and hyphens only' }); return }
+    if (!val || val.length < 3) { setSlugMsg({ ok:false, msg:'Min 3 characters' }); return false }
+    if (!/^[a-z0-9][a-z0-9-]+[a-z0-9]$/.test(val)) {
+      setSlugMsg({ ok:false, msg:'Lowercase letters, numbers and hyphens only' }); return false
+    }
     const { data } = await supabase.from('companies').select('id').eq('slug', val).maybeSingle()
-    if (data) { setSlugMsg({ ok:false, msg:'Already taken — try another' }); return }
+    if (data) { setSlugMsg({ ok:false, msg:'Already taken — try another name' }); return false }
     setSlugMsg({ ok:true, msg:`✓  workbills.app/${val}` })
+    return true
   }
 
   const submit = async () => {
-    if (!email || !/\S+@\S+\.\S+/.test(email)) { toast('Enter a valid email'); return }
+    if (!email || !/\S+@\S+\.\S+/.test(email)) { toast('Enter a valid owner email'); return }
     if (!name.trim()) { toast('Enter a company name'); return }
-    if (!slugMsg.ok)  { toast('Fix the URL first'); return }
+    const slugOk = await checkSlug(slug)
+    if (!slugOk) { toast('Fix the URL before continuing'); return }
+
     setLoading(true)
     try {
-      const pList = partners.filter(p => p.name.trim()).map(p => ({
-        name:p.name.trim(), email:p.email.trim().toLowerCase()||null, role:'partner'
-      }))
-      const { error:ce } = await supabase.from('companies').insert([{
-        name:name.trim(), slug, emoji, color:'#3a6652', currency, partners:pList
+      const pList = partners
+        .filter(p => p.name.trim())
+        .map(p => ({ name: p.name.trim(), email: p.email.trim().toLowerCase() || null, role: 'partner' }))
+
+      // Schema: companies(id uuid, name, subtitle, emoji, color, currency, partners jsonb, slug)
+      // NO owner_email column — don't include it
+      const { data: co, error: ce } = await supabase
+        .from('companies')
+        .insert([{
+          name:     name.trim(),
+          slug:     slug,
+          emoji:    emoji,
+          color:    '#3a6652',
+          currency: currency,
+          partners: pList,       // stored as JSONB
+        }])
+        .select('id, slug, name, emoji, currency, partners')
+        .single()
+
+      if (ce) {
+        console.error('[Register] company insert failed:', ce)
+        toast('Registration failed: ' + (ce.message || ce.details || 'Database error'))
+        return
+      }
+
+      console.log('[Register] company created, UUID:', co.id)
+
+      // Schema: users(id uuid, company_id uuid FK, email, role)
+      // company_id MUST be the UUID, not the slug string
+      const { error: ue } = await supabase.from('users').insert([{
+        company_id: co.id,                    // ← real UUID
+        email:      email.toLowerCase(),
+        role:       'owner',
       }])
-      if (ce) throw ce
-      await supabase.from('users').insert([{ company_id:slug, email:email.toLowerCase(), role:'owner' }]).catch(()=>{})
-      await Promise.all(pList.filter(p=>p.email).map(p =>
-        supabase.from('users').insert([{ company_id:slug, email:p.email, role:'partner' }]).catch(()=>{})
-      ))
-      const local = JSON.parse(localStorage.getItem('wb_companies')||'[]')
-      local.push({ id:slug, slug, emoji, name:name.trim(), partners:pList, currency, ownerEmail:email.toLowerCase() })
+      if (ue && !ue.message?.includes('duplicate')) {
+        console.warn('[Register] users insert warning:', ue)
+      }
+
+      // Insert partners into users table
+      await Promise.all(
+        pList.filter(p => p.email).map(p =>
+          supabase.from('users').insert([{
+            company_id: co.id,                // ← real UUID
+            email:      p.email,
+            role:       'partner',
+          }]).then(r => r.error && console.warn('[Register] partner user:', r.error))
+        )
+      )
+
+      // Save to localStorage so findCompany fallback works
+      const local = JSON.parse(localStorage.getItem('wb_companies') || '[]')
+      local.push({
+        id:         co.id,   // UUID
+        slug:       slug,
+        emoji,
+        name:       name.trim(),
+        partners:   pList,
+        currency,
+        ownerEmail: email.toLowerCase(),
+      })
       localStorage.setItem('wb_companies', JSON.stringify(local))
-      setDone({ url:`workbills.app/${slug}` })
-    } catch(e) { toast('Error: ' + e.message) }
-    finally    { setLoading(false) }
+
+      console.log('[Register] done!')
+      setDone({ url: `workbills.app/${slug}` })
+
+    } catch (e) {
+      console.error('[Register] fatal:', e)
+      toast('Registration failed: ' + (e?.message || JSON.stringify(e)))
+    } finally {
+      setLoading(false)
+    }
   }
 
   const filledPartners = partners.filter(p => p.name.trim())
@@ -73,7 +136,7 @@ export default function RegisterPage() {
       <div className={s.success}>
         <div style={{ fontSize:48, marginBottom:16 }}>🎉</div>
         <h2>Your workspace is ready!</h2>
-        <p>Share this URL with your team. Sign in with Google to get started.</p>
+        <p>Sign in with Google to get started. Share your URL with your team.</p>
         <div className={s.urlBox}>
           <span>{done.url}</span>
           <button onClick={() => { navigator.clipboard?.writeText('https://'+done.url); toast('Copied!') }}>Copy</button>
@@ -93,8 +156,6 @@ export default function RegisterPage() {
       </nav>
 
       <div className={s.body}>
-
-        {/* ── Form ── */}
         <div className={s.form}>
           <h1>Register your company</h1>
           <p className={s.sub}>Free forever. Your own private URL. Works on mobile.</p>
@@ -112,7 +173,8 @@ export default function RegisterPage() {
           {/* Name */}
           <div className={s.field}>
             <label className={s.lbl}>Company name</label>
-            <input className="inp" placeholder="e.g. Amrotek Infra" value={name} onChange={e => handleName(e.target.value)} />
+            <input className="inp" placeholder="e.g. Amrotek Infra" value={name}
+              onChange={e => handleName(e.target.value)} />
           </div>
 
           {/* Slug */}
@@ -131,7 +193,8 @@ export default function RegisterPage() {
           {/* Email */}
           <div className={s.field}>
             <label className={s.lbl}>Your email (owner)</label>
-            <input className="inp" type="email" placeholder="you@gmail.com" value={email} onChange={e => setEmail(e.target.value)} />
+            <input className="inp" type="email" placeholder="you@gmail.com" value={email}
+              onChange={e => setEmail(e.target.value)} />
           </div>
 
           {/* Currency */}
@@ -150,12 +213,12 @@ export default function RegisterPage() {
                 <span className={s.pEmoji}>👤</span>
                 <div className={s.pInputs}>
                   <input className="inp" placeholder="Partner name" value={p.name}
-                    onChange={e => setPartners(prev => prev.map((r,j) => j===i ? {...r,name:e.target.value} : r))} />
+                    onChange={e => setPartners(prev => prev.map((r,j) => j===i ? {...r, name:e.target.value} : r))} />
                   <input className="inp" type="email" placeholder="Email (optional)" value={p.email}
-                    onChange={e => setPartners(prev => prev.map((r,j) => j===i ? {...r,email:e.target.value} : r))} />
+                    onChange={e => setPartners(prev => prev.map((r,j) => j===i ? {...r, email:e.target.value} : r))} />
                 </div>
                 {partners.length > 1 && (
-                  <button className={s.rm} onClick={() => setPartners(prev => prev.filter((_,j)=>j!==i))}>×</button>
+                  <button className={s.rm} onClick={() => setPartners(prev => prev.filter((_,j) => j!==i))}>×</button>
                 )}
               </div>
             ))}
@@ -170,7 +233,7 @@ export default function RegisterPage() {
           <p className={s.terms}>By registering you agree to our terms. Free forever — no credit card.</p>
         </div>
 
-        {/* ── Preview ── */}
+        {/* Preview */}
         <div className={s.preview}>
           <div className={s.previewLbl}>Preview</div>
           <div className={s.previewCard}>
@@ -180,16 +243,13 @@ export default function RegisterPage() {
             <div className={s.previewCurr}>{currency}</div>
             {filledPartners.length > 0 && (
               <div className={s.previewPartners}>
-                {filledPartners.map((p, i) => (
-                  <div key={i} className={s.previewPartner}>
-                    <span>👤</span> {p.name}
-                  </div>
+                {filledPartners.map((p,i) => (
+                  <div key={i} className={s.previewPartner}><span>👤</span> {p.name}</div>
                 ))}
               </div>
             )}
           </div>
         </div>
-
       </div>
     </div>
   )

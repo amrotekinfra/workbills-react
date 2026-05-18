@@ -1,55 +1,75 @@
 import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase, SUPER_ADMIN, decodeEntry } from '../lib/supabase'
+import { supabase, SUPER_ADMIN } from '../lib/supabase'
 import { useStore, usePersistedStore } from '../store'
 
 export function useAuth() {
   const navigate = useNavigate()
   const { setUser, setRole, setIsDemo, setEntries, setCustomCats } = useStore()
-  const { setActiveCompany, clearActiveCompany, activeCompany } = usePersistedStore()
+  const { setActiveCompany, clearActiveCompany } = usePersistedStore()
 
   // ── Find company for this user ─────────────────────────────
   const findCompany = useCallback(async (user) => {
     try {
-      const { data: rows } = await supabase
-        .from('users').select('company_id, role').eq('email', user.email)
+      // 1. Look up users table — company_id is a UUID FK
+      const { data: rows, error: ue } = await supabase
+        .from('users')
+        .select('company_id, role')
+        .eq('email', user.email.toLowerCase())
 
-      let companyId = null, userRole = 'owner'
+      console.log('[findCompany] users rows:', rows, ue)
 
       if (rows?.length) {
-        companyId = rows[0].company_id
-        userRole  = rows[0].role || 'owner'
-      } else {
-        // Fall back to localStorage (for owners who registered but haven't synced users table)
-        const local = JSON.parse(localStorage.getItem('wb_companies') || '[]')
-        const match = local.find(c => c.ownerEmail?.toLowerCase() === user.email.toLowerCase())
-        if (match) { companyId = match.id || match.slug; userRole = 'owner' }
+        const { company_id, role } = rows[0]
+        setRole(role || 'owner')
+
+        // Fetch company by UUID
+        const { data: co, error: ce } = await supabase
+          .from('companies').select('*').eq('id', company_id).maybeSingle()
+
+        console.log('[findCompany] company by UUID:', co, ce)
+
+        if (co) return normalizeCompany(co)
       }
 
-      if (!companyId) return null
+      // 2. Fallback: find by slug (in case user registered from old code)
+      const { data: coBySlug } = await supabase
+        .from('companies').select('*').eq('slug', user.email.toLowerCase()).maybeSingle()
+      // (That won't match, but try owner_email if column exists later)
 
-      setRole(userRole)
-
-      // Load company data
-      const { data: co } = await supabase.from('companies').select('*').eq('id', companyId).maybeSingle()
-        .catch(() => ({ data: null }))
-
-      if (co) {
-        let partners = []
-        try { partners = typeof co.partners === 'string' ? JSON.parse(co.partners || '[]') : (co.partners || []) }
-        catch { partners = [] }
-        return { ...co, partners }
-      }
-
-      // Company in localStorage only
+      // 3. Fallback: localStorage
       const local = JSON.parse(localStorage.getItem('wb_companies') || '[]')
-      return local.find(c => (c.id || c.slug) === companyId) || null
+      const match = local.find(c =>
+        c.ownerEmail?.toLowerCase() === user.email.toLowerCase()
+      )
+      if (match) {
+        console.log('[findCompany] found in localStorage:', match)
+        const cid = match.id
+        if (cid) {
+          const { data: co } = await supabase
+            .from('companies').select('*').eq('id', cid).maybeSingle()
+          if (co) { setRole('owner'); return normalizeCompany(co) }
+        }
+        setRole('owner')
+        return match
+      }
 
+      return null
     } catch (e) {
-      console.error('findCompany:', e)
+      console.error('[findCompany] error:', e)
       return null
     }
   }, [setRole])
+
+  const normalizeCompany = (co) => {
+    let partners = []
+    try {
+      partners = typeof co.partners === 'string'
+        ? JSON.parse(co.partners || '[]')
+        : (co.partners || [])
+    } catch { partners = [] }
+    return { ...co, partners }
+  }
 
   // ── Show app after login ───────────────────────────────────
   const showApp = useCallback(async (user) => {
@@ -62,6 +82,7 @@ export function useAuth() {
     }
 
     const co = await findCompany(user)
+    console.log('[showApp] company found:', co)
     if (!co) { navigate('/register', { replace: true }); return }
 
     setActiveCompany(co)
@@ -70,14 +91,13 @@ export function useAuth() {
 
   // ── Init on mount ──────────────────────────────────────────
   const initAuth = useCallback(async () => {
-    // NOTE: Do NOT strip the hash here.
-    // Supabase needs the #access_token in the URL to establish the session.
-    // onAuthStateChange (below) handles SIGNED_IN and cleans the hash after.
+    // Do NOT strip hash here — Supabase needs it to establish session
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) { await showApp(session.user); return }
-    } catch { /* no session */ }
-    // No session → stay on landing
+    } catch (e) {
+      console.error('[initAuth] error:', e)
+    }
   }, [showApp])
 
   // ── Google OAuth ───────────────────────────────────────────
@@ -101,7 +121,6 @@ export function useAuth() {
     navigate('/', { replace: true })
   }, [setUser, setRole, setEntries, setCustomCats, clearActiveCompany, navigate])
 
-
   // ── Demo mode ──────────────────────────────────────────────
   const loadDemo = useCallback(() => {
     const demoCompany = {
@@ -113,8 +132,8 @@ export function useAuth() {
       ]
     }
     const today = new Date()
-    const d = (daysAgo) => {
-      const dt = new Date(today); dt.setDate(today.getDate() - daysAgo)
+    const d = (n) => {
+      const dt = new Date(today); dt.setDate(today.getDate() - n)
       return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`
     }
     const demoEntries = [
@@ -157,7 +176,7 @@ export function useAuth() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
-        // Now it's safe to clean the hash — Supabase already read the token
+        // Clean hash AFTER Supabase has processed the token
         if (window.location.hash?.includes('access_token')) {
           history.replaceState(null, '', window.location.pathname)
         }
