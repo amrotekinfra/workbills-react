@@ -52,8 +52,20 @@ export const fmt = (n, sym = '₹') =>
   sym + Math.round(n || 0).toLocaleString('en-IN')
 
 export const fmtDate = d => {
-  const dt = d instanceof Date ? d : new Date(d + 'T00:00:00')
-  return `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}/${dt.getFullYear()}`
+  // d is expected to be a YYYY-MM-DD string from <input type="date">
+  if (!d) return ''
+  const s = String(d).trim()
+  // Already DD/MM/YYYY
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s
+  // YYYY-MM-DD (standard input format) — parse safely without timezone shift
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const [y,m,dy] = s.split('-')
+    return `${dy}/${m}/${y}`
+  }
+  // Fallback: let JS parse it
+  const dt = d instanceof Date ? d : new Date(s)
+  if (isNaN(dt.getTime())) return ''
+  return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`
 }
 
 export const parseDate = s => {
@@ -76,17 +88,34 @@ export const decodeEntry = row => {
   if (desc.includes(' | 💳 ')) { const p = desc.split(' | 💳 '); payMode  = p[1]; desc = p[0] }
   if (desc.includes(' | 📝 ')) { const p = desc.split(' | 📝 '); notes    = p[1]; desc = p[0] }
 
-  // Normalise date to DD/MM/YYYY regardless of how it was stored
-  // Handles: "2026-05-18" (ISO), "2026-05-18T..." (ISO+time), "18/05/2026" (already correct)
-  let date = row.date || ''
-  if (date && !date.includes('/')) {
-    // ISO format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS
-    const iso = date.split('T')[0]          // "2026-05-18"
-    const [y, m, d] = iso.split('-')
-    if (y && m && d) date = `${d}/${m}/${y}` // "18/05/2026"
-  }
+  // Robust date normalisation → always DD/MM/YYYY or '' if unparseable
+  let date = normDate(row.date)
 
   return { ...row, date, description: desc, notes, payMode, photoUrl }
+}
+
+/** Convert any date string to DD/MM/YYYY, or '' if unparseable */
+export const normDate = (raw) => {
+  if (!raw) return ''
+  const s = String(raw).trim()
+  // Already DD/MM/YYYY and valid (no NaN)
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+    const [d,m,y] = s.split('/')
+    if (Number(d)>0 && Number(m)>0 && Number(y)>0) return s
+    return '' // was "NaN/NaN/NaN" or similar garbage
+  }
+  // ISO YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    const iso = s.split('T')[0]
+    const [y,m,d] = iso.split('-')
+    if (Number(y)>0 && Number(m)>0 && Number(d)>0) return `${d}/${m}/${y}`
+  }
+  // Try native parse as last resort
+  const dt = new Date(s)
+  if (!isNaN(dt.getTime())) {
+    return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`
+  }
+  return ''
 }
 
 /** Encode metadata back into description */

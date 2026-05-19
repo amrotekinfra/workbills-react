@@ -59,7 +59,7 @@ export function useEntries() {
       const isEmp = role === 'employee'
       const dbRow = {
         company_id: companyId,
-        date:       fmtDate(date + 'T00:00:00'),
+        date:       fmtDate(date),  // date is YYYY-MM-DD from <input type='date'>
         partner:    isEmp ? null : (partnerCode || null),
         person,
         description: finalDesc,

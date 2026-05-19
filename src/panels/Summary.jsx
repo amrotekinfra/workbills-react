@@ -73,9 +73,14 @@ export default function SummaryPanel() {
 
   const pieData = byCat.slice(0,14).map(([n,a],i)=>({ n,a, pct:total>0?a/total:0, color:PIE_CLR[i%PIE_CLR.length] }))
 
-  const fmtDt = str => {
-    const p=str?.split('/'); if(!p||p.length!==3) return str
-    return new Date(+p[2],+p[1]-1,+p[0]).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})
+  const fmtDt = (str, short = false) => {
+    if (!str) return ''
+    const p = str?.split('/')
+    if (!p || p.length !== 3) return str
+    const dt = new Date(+p[2], +p[1]-1, +p[0])
+    if (isNaN(dt.getTime())) return ''
+    if (short) return dt.toLocaleDateString('en-IN', { day:'numeric', month:'short' })
+    return dt.toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' })
   }
 
   if (entries.length===0) return (
@@ -188,7 +193,7 @@ export default function SummaryPanel() {
                         <div key={e.id} className={s.catEntry}>
                           <div>
                             <div className={s.cePerson}>{e.person}</div>
-                            <div className={s.ceDesc}>{e.date}{e.description?' · '+e.description:''}</div>
+                            <div className={s.ceDesc}>{fmtDt(e.date, true)}{e.description?' · '+e.description:''}</div>
                           </div>
                           <div className={s.ceAmt}>{fmt(e.amount,sym)}</div>
                         </div>
