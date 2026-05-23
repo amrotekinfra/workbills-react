@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { devLog } from '../lib/devLog'
 import { useToast } from '../components/Toast'
 import s from './Register.module.css'
 
@@ -76,12 +77,12 @@ export default function RegisterPage() {
         .single()
 
       if (ce) {
-        console.error('[Register] company insert failed:', ce)
+        devLog.error('[RegisterPage] company insert failed')
         toast('Registration failed: ' + (ce.message || ce.details || 'Database error'))
         return
       }
 
-      console.log('[Register] company created, UUID:', co.id)
+      devLog.info('[RegisterPage] company created')
 
       // Schema: users(id uuid, company_id uuid FK, email, role)
       // company_id MUST be the UUID, not the slug string
@@ -91,7 +92,7 @@ export default function RegisterPage() {
         role:       'owner',
       }])
       if (ue && !ue.message?.includes('duplicate')) {
-        console.warn('[Register] users insert warning:', ue)
+        devLog.warn('[RegisterPage] users insert warning')
       }
 
       // Insert partners into users table
@@ -101,7 +102,7 @@ export default function RegisterPage() {
             company_id: co.id,                // ← real UUID
             email:      p.email,
             role:       'partner',
-          }]).then(r => r.error && console.warn('[Register] partner user:', r.error))
+          }]).then(r => r.error && devLog.warn('[RegisterPage] partner user insert'))
         )
       )
 
@@ -118,11 +119,11 @@ export default function RegisterPage() {
       })
       localStorage.setItem('wb_companies', JSON.stringify(local))
 
-      console.log('[Register] done!')
+      devLog.info('[RegisterPage] registration complete')
       setDone({ url: `workbills.app/${slug}` })
 
     } catch (e) {
-      console.error('[Register] fatal:', e)
+      devLog.error('[RegisterPage] fatal error')
       toast('Registration failed: ' + (e?.message || JSON.stringify(e)))
     } finally {
       setLoading(false)

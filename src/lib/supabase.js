@@ -1,8 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
-export const SUPA_URL      = 'https://htblfoprejqjkbuumtxn.supabase.co'
-export const SUPA_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0Ymxmb3ByZWpxamtidXVtdHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NDMwODcsImV4cCI6MjA5MjMxOTA4N30.JsWqnYlU84KJKBUXAelzRIwi9RW8Q_pAEfXjwsDyu-0'
-export const SUPER_ADMIN   = 'amrotekinfra@gmail.com'
+export const SUPA_URL      = import.meta.env.VITE_SUPABASE_URL
+export const SUPA_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const supabase = createClient(SUPA_URL, SUPA_ANON_KEY, {
   auth: {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase, SUPER_ADMIN } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
 import { useStore, usePersistedStore } from '../store'
 
 export function useAuth() {
@@ -17,7 +17,7 @@ export function useAuth() {
         .select('company_id, role')
         .eq('email', user.email.toLowerCase())
 
-      console.log('[findCompany] users rows:', rows, ue)
+      if (ue) console.error('[findCompany] DB error (safe)')
 
       if (rows?.length) {
         const { company_id, role } = rows[0]
@@ -27,15 +27,13 @@ export function useAuth() {
         const { data: co, error: ce } = await supabase
           .from('companies').select('*').eq('id', company_id).maybeSingle()
 
-        console.log('[findCompany] company by UUID:', co, ce)
-
+        if (ce) console.error('[findCompany] fetch error (safe)')
         if (co) return normalizeCompany(co)
       }
 
       // 2. Fallback: find by slug (in case user registered from old code)
       const { data: coBySlug } = await supabase
         .from('companies').select('*').eq('slug', user.email.toLowerCase()).maybeSingle()
-      // (That won't match, but try owner_email if column exists later)
 
       // 3. Fallback: localStorage
       const local = JSON.parse(localStorage.getItem('wb_companies') || '[]')
@@ -43,7 +41,6 @@ export function useAuth() {
         c.ownerEmail?.toLowerCase() === user.email.toLowerCase()
       )
       if (match) {
-        console.log('[findCompany] found in localStorage:', match)
         const cid = match.id
         if (cid) {
           const { data: co } = await supabase
@@ -56,7 +53,7 @@ export function useAuth() {
 
       return null
     } catch (e) {
-      console.error('[findCompany] error:', e)
+      console.error('[findCompany] Unexpected error (safe)')
       return null
     }
   }, [setRole])
@@ -76,13 +73,13 @@ export function useAuth() {
     setUser(user)
     setIsDemo(false)
 
-    if (user.email.trim().toLowerCase() === SUPER_ADMIN.toLowerCase()) {
+    const superAdminEmail = import.meta.env.VITE_SUPER_ADMIN || ''
+    if (superAdminEmail && user.email.trim().toLowerCase() === superAdminEmail.toLowerCase()) {
       navigate('/admin', { replace: true })
       return
     }
 
     const co = await findCompany(user)
-    console.log('[showApp] company found:', co)
     if (!co) { navigate('/register', { replace: true }); return }
 
     setActiveCompany(co)
@@ -96,7 +93,7 @@ export function useAuth() {
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) { await showApp(session.user); return }
     } catch (e) {
-      console.error('[initAuth] error:', e)
+      console.error('[initAuth] Failed to initialize (safe)')
     }
   }, [showApp])
 

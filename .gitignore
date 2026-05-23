@@ -1,1 +1,22 @@
 node_modules
+
+# Environment & secrets (never commit)
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist
+
+# IDE & OS
+.DS_Store
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Cache
+.cache

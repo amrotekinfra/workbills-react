@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase, SUPER_ADMIN } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
 import { useStore } from '../store'
 import { useAuth } from '../hooks/useAuth'
 import s from './AdminPage.module.css'
@@ -15,7 +15,8 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!user) { navigate('/', { replace: true }); return }
-    if (user.email.trim().toLowerCase() !== SUPER_ADMIN.toLowerCase()) {
+    const superAdminEmail = import.meta.env.VITE_SUPER_ADMIN || ''
+    if (!superAdminEmail || user.email.trim().toLowerCase() !== superAdminEmail.toLowerCase()) {
       navigate('/', { replace: true }); return
     }
     load()
