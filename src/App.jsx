@@ -4,6 +4,7 @@ import { useAuth } from './hooks/useAuth'
 import { useStore } from './store'
 import { registerToast } from './hooks/useEntries'
 import { useToast, Toast } from './components/Toast'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 import LandingPage  from './pages/LandingPage'
 import LoginPage    from './pages/LoginPage'
@@ -37,16 +38,19 @@ export default function App() {
         ⚡ Offline — entries will sync when connected
       </div>
 
-      <Routes>
-        <Route path="/"         element={<LandingPage />} />
-        <Route path="/login"    element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/app"      element={<AppShell />} />
-        <Route path="/admin"    element={<AdminPage />} />
-        <Route path="*"         element={<Navigate to="/" replace />} />
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/"         element={<LandingPage />} />
+          <Route path="/login"    element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/app"      element={<AppShell />} />
+          <Route path="/admin"    element={<AdminPage />} />
+          <Route path="*"         element={<Navigate to="/" replace />} />
+        </Routes>
+      </ErrorBoundary>
 
       <Toast />
     </>
   )
 }
+

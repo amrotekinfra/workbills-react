@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { devLog } from '../lib/devLog'
 import { useToast } from '../components/Toast'
+import { checkRateLimit, recordFailedAttempt, resetRateLimit, getCountdownString } from '../lib/rateLimiter'
+import { sanitizeName, sanitizeDescription, validateEmail, validateSlug } from '../lib/validators'
 import s from './Register.module.css'
 
 const CURRENCIES = [
@@ -50,7 +52,18 @@ export default function RegisterPage() {
   }
 
   const submit = async () => {
-    if (!email || !/\S+@\S+\.\S+/.test(email)) { toast('Enter a valid owner email'); return }
+    // Rate limit check
+    const rateLimit = checkRateLimit(email)
+    if (rateLimit.limited) {
+      const countdown = getCountdownString(rateLimit.minutesRemaining)
+      toast(`Too many attempts. Try again in ${countdown}`)
+      return
+    }
+
+    // Validate email
+    const validEmail = validateEmail(email)
+    if (!validEmail) { toast('Enter a valid email'); return }
+
     if (!name.trim()) { toast('Enter a company name'); return }
     const slugOk = await checkSlug(slug)
     if (!slugOk) { toast('Fix the URL before continuing'); return }
@@ -59,14 +72,18 @@ export default function RegisterPage() {
     try {
       const pList = partners
         .filter(p => p.name.trim())
-        .map(p => ({ name: p.name.trim(), email: p.email.trim().toLowerCase() || null, role: 'partner' }))
+        .map(p => ({
+          name: sanitizeName(p.name.trim()),
+          email: validateEmail(p.email.trim()) || null,
+          role: 'partner'
+        }))
 
       // Schema: companies(id uuid, name, subtitle, emoji, color, currency, partners jsonb, slug)
       // NO owner_email column — don't include it
       const { data: co, error: ce } = await supabase
         .from('companies')
         .insert([{
-          name:     name.trim(),
+          name:     sanitizeName(name.trim()),
           slug:     slug,
           emoji:    emoji,
           color:    '#3a6652',
@@ -78,6 +95,7 @@ export default function RegisterPage() {
 
       if (ce) {
         devLog.error('[RegisterPage] company insert failed')
+        recordFailedAttempt(email)
         toast('Registration failed: ' + (ce.message || ce.details || 'Database error'))
         return
       }
@@ -88,7 +106,7 @@ export default function RegisterPage() {
       // company_id MUST be the UUID, not the slug string
       const { error: ue } = await supabase.from('users').insert([{
         company_id: co.id,                    // ← real UUID
-        email:      email.toLowerCase(),
+        email:      validEmail,
         role:       'owner',
       }])
       if (ue && !ue.message?.includes('duplicate')) {
@@ -112,18 +130,20 @@ export default function RegisterPage() {
         id:         co.id,   // UUID
         slug:       slug,
         emoji,
-        name:       name.trim(),
+        name:       sanitizeName(name.trim()),
         partners:   pList,
         currency,
-        ownerEmail: email.toLowerCase(),
+        ownerEmail: validEmail,
       })
       localStorage.setItem('wb_companies', JSON.stringify(local))
 
       devLog.info('[RegisterPage] registration complete')
+      resetRateLimit(email)
       setDone({ url: `workbills.app/${slug}` })
 
     } catch (e) {
       devLog.error('[RegisterPage] fatal error')
+      recordFailedAttempt(email)
       toast('Registration failed: ' + (e?.message || JSON.stringify(e)))
     } finally {
       setLoading(false)

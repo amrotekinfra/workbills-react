@@ -2,8 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { initSentry } from './lib/sentry.js'
 import App from './App'
 import './index.css'
+
+// Initialize Sentry for error monitoring (optional, requires VITE_SENTRY_DSN)
+initSentry()
 
 const qc = new QueryClient({
   defaultOptions: {

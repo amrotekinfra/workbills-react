@@ -3,6 +3,7 @@ import { useStore, usePersistedStore, partnerConfig, ROLE } from '../store'
 import { useEntries } from '../hooks/useEntries'
 import { useToast } from '../components/Toast'
 import { SYS_CATS, pCode, pColor, pBg, fmt, todayISO } from '../lib/supabase'
+import { sanitizeName, sanitizeDescription, validateAmount } from '../lib/validators'
 import s from './AddEntry.module.css'
 
 const PAY_MODES = ['UPI','Cash','Bank Transfer','Cheque']
@@ -59,16 +60,26 @@ export default function AddEntry() {
   }
 
   const submit = async () => {
-    const amount = parseFloat(amt.replace(/,/g, ''))
     if (!date)             { toast('Pick a date'); return }
     if (!person.trim())    { toast('Enter a person'); return }
     if (!desc.trim())      { toast('Enter a description'); return }
-    if (!amount || amount <= 0) { toast('Enter a valid amount'); return }
+    const amount = validateAmount(amt.replace(/,/g, ''))
+    if (!amount) { toast('Enter a valid amount'); return }
     if (!cat)              { toast('Select a category'); return }
     try {
-      await save({ date, person: person.trim(), description: desc.trim(), amount, category: cat,
-                   notes: notes.trim(), payMode: selPayMode, photoFile: photo,
-                   existingPhotoUrl, partnerCode: cfg.isSolo ? null : selPartner, editingId })
+      await save({
+        date,
+        person: sanitizeName(person.trim()),
+        description: sanitizeDescription(desc.trim()),
+        amount,
+        category: cat,
+        notes: sanitizeDescription(notes.trim()),
+        payMode: selPayMode,
+        photoFile: photo,
+        existingPhotoUrl,
+        partnerCode: cfg.isSolo ? null : selPartner,
+        editingId
+      })
       resetForm()
       setPanel('entries')
     } catch { /* toast shown in hook */ }

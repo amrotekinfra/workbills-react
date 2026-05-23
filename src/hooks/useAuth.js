@@ -2,6 +2,7 @@ import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useStore, usePersistedStore } from '../store'
+import { checkRateLimit, recordFailedAttempt, resetRateLimit, getCountdownString } from '../lib/rateLimiter'
 
 export function useAuth() {
   const navigate = useNavigate()
@@ -99,14 +100,29 @@ export function useAuth() {
 
   // ── Google OAuth ───────────────────────────────────────────
   const loginGoogle = useCallback(async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin,
-        queryParams: { prompt: 'select_account' }
-      }
-    })
-    if (error) throw error
+    // Check rate limit
+    const rateLimit = checkRateLimit(import.meta.env.VITE_TEST_EMAIL || 'user@example.com')
+    if (rateLimit.limited) {
+      const countdown = getCountdownString(rateLimit.minutesRemaining)
+      throw new Error(`Too many login attempts. Try again in ${countdown}`)
+    }
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+          queryParams: { prompt: 'select_account' }
+        }
+      })
+      if (error) throw error
+      // Success — reset rate limit
+      resetRateLimit(import.meta.env.VITE_TEST_EMAIL || 'user@example.com')
+    } catch (error) {
+      // Track failed attempt
+      recordFailedAttempt(import.meta.env.VITE_TEST_EMAIL || 'user@example.com')
+      throw error
+    }
   }, [])
 
   // ── Logout ─────────────────────────────────────────────────
