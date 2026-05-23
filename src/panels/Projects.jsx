@@ -3,6 +3,8 @@ import { useStore, usePersistedStore } from '../store'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { fmt } from '../lib/supabase'
+import { withApiError } from '../lib/apiError'
+import { sanitizeName } from '../lib/validators'
 import s from './Projects.module.css'
 
 const COLORS = ['#3a6652','#ea580c','#7c3aed','#0891b2','#e8920a','#dc2626','#16a34a','#9333ea']
@@ -52,15 +54,37 @@ export default function Projects() {
   const save = async () => {
     if (!name.trim()) { toast('Enter a project name'); return }
     setSaving(true)
-    const row = { company_id: activeCompany.id, name: name.trim(), site: site.trim(), budget: +budget||null, color, emoji }
-    let saved
-    const { data, error } = editing
-      ? await supabase.from('projects').update(row).eq('id', editing.id).select().catch(() => ({ data:null, error:true }))
-      : await supabase.from('projects').insert([row]).select().catch(() => ({ data:null, error:true }))
 
-    if (error || !data) {
-      // localStorage fallback
+    const row = {
+      company_id: activeCompany.id,
+      name: sanitizeName(name.trim()),
+      site: sanitizeName(site.trim()),
+      budget: +budget || null,
+      color,
+      emoji
+    }
+
+    const result = editing
+      ? await withApiError(
+          () => supabase.from('projects').update(row).eq('id', editing.id).select(),
+          '[Projects] update'
+        )
+      : await withApiError(
+          () => supabase.from('projects').insert([row]).select(),
+          '[Projects] insert'
+        )
+
+    if (result.success) {
+      setProjects(
+        editing
+          ? projects.map(p => p.id === editing.id ? result.data[0] : p)
+          : [result.data[0], ...projects]
+      )
+      toast(editing ? '✓ Project updated' : '✓ Project created')
+    } else {
+      // localStorage fallback on error
       const local = JSON.parse(localStorage.getItem(`wb_projects_${activeCompany.id}`) || '[]')
+      let saved
       if (editing) {
         saved = local.map(p => p.id === editing.id ? { ...p, ...row } : p)
       } else {
@@ -68,21 +92,33 @@ export default function Projects() {
       }
       localStorage.setItem(`wb_projects_${activeCompany.id}`, JSON.stringify(saved))
       setProjects(saved)
-    } else {
-      setProjects(editing ? projects.map(p => p.id === editing.id ? data[0] : p) : [data[0], ...projects])
+      toast(result.error.message)
     }
-    setShowForm(false); resetForm(); setSaving(false)
-    toast(editing ? '✓ Project updated' : '✓ Project created')
+
+    setShowForm(false)
+    resetForm()
+    setSaving(false)
   }
 
   const del = async (p) => {
     if (!confirm(`Delete "${p.name}"?`)) return
-    await supabase.from('projects').delete().eq('id', p.id).catch(() => {})
+
+    const result = await withApiError(
+      () => supabase.from('projects').delete().eq('id', p.id),
+      '[Projects] delete'
+    )
+
+    if (result.success) {
+      setProjects(projects.filter(x => x.id !== p.id))
+      toast('Deleted')
+    } else {
+      toast(result.error.message)
+    }
+
+    // Also remove from localStorage
     const local = JSON.parse(localStorage.getItem(`wb_projects_${activeCompany.id}`) || '[]')
-    const next  = local.filter(x => x.id !== p.id)
+    const next = local.filter(x => x.id !== p.id)
     localStorage.setItem(`wb_projects_${activeCompany.id}`, JSON.stringify(next))
-    setProjects(projects.filter(x => x.id !== p.id))
-    toast('Deleted')
   }
 
   // Compute spend per project from entries

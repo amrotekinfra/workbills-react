@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useStore, usePersistedStore, ROLE } from '../store'
 import { supabase, SYS_CATS } from '../lib/supabase'
 import { useToast } from '../components/Toast'
+import { withApiError } from '../lib/apiError'
+import { sanitizeName } from '../lib/validators'
 import s from './Categories.module.css'
 
 const CAT_COLORS = ['#3a6652','#ea580c','#7c3aed','#0891b2','#e8920a','#dc2626','#16a34a','#9333ea','#ca8a04','#0f766e','#86198f','#374151']
@@ -28,21 +30,44 @@ export default function Categories() {
     if (!catName.trim()) { toast('Enter a category name'); return }
     if (allCats.find(c => c.n.toLowerCase() === catName.toLowerCase())) { toast('Category already exists'); return }
     setSaving(true)
-    const row = { company_id: activeCompany.id, name: catName.trim(), emoji: catEmoji, color: catColor }
-    const { error } = await supabase.from('categories').insert([row]).catch(() => ({ error: true }))
-    const newCat = { n: catName.trim(), e: catEmoji, c: catColor }
+
+    const sanitizedName = sanitizeName(catName.trim())
+    const row = { company_id: activeCompany.id, name: sanitizedName, emoji: catEmoji, color: catColor }
+
+    const result = await withApiError(
+      () => supabase.from('categories').insert([row]),
+      '[Categories] add'
+    )
+
+    const newCat = { n: sanitizedName, e: catEmoji, c: catColor }
     setCustomCats([...customCats, newCat])
-    if (error) toast('Saved locally only (table may not exist yet)')
-    else       toast('✓ Category added')
-    resetForm(); setShowForm(false); setSaving(false)
+
+    if (result.success) {
+      toast('✓ Category added')
+    } else {
+      toast(result.error.message)
+    }
+
+    resetForm()
+    setShowForm(false)
+    setSaving(false)
   }
 
   const delCat = async (cat) => {
     if (!canManage) { toast('Ask the owner to delete categories'); return }
     if (!confirm(`Delete "${cat.n}"? Existing entries keep this category.`)) return
-    await supabase.from('categories').delete().eq('company_id', activeCompany.id).eq('name', cat.n).catch(() => {})
-    setCustomCats(customCats.filter(c => c.n !== cat.n))
-    toast('Category removed')
+
+    const result = await withApiError(
+      () => supabase.from('categories').delete().eq('company_id', activeCompany.id).eq('name', cat.n),
+      '[Categories] delete'
+    )
+
+    if (result.success) {
+      setCustomCats(customCats.filter(c => c.n !== cat.n))
+      toast('Category removed')
+    } else {
+      toast(result.error.message)
+    }
   }
 
   return (

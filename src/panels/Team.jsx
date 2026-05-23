@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useStore, usePersistedStore, ROLE } from '../store'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
+import { withApiError } from '../lib/apiError'
+import { sanitizeName, validateEmail } from '../lib/validators'
 import s from './Team.module.css'
 
 const ROLE_META = {
@@ -51,32 +53,47 @@ export default function Team() {
   }
 
   const invite = async () => {
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Enter a valid email'); return }
-    setSaving(true)
-    const { error } = await supabase.from('users').insert([{
-      company_id: activeCompany.id,
-      email: email.trim().toLowerCase(),
-      role: invRole,
-    }]).catch(() => ({ error: true }))
+    const validEmail = validateEmail(email)
+    if (!validEmail) { toast('Enter a valid email'); return }
 
-    if (!error) {
-      toast(`✓ ${email} invited as ${invRole}`)
-      setMembers(prev => [...prev, { id: Date.now(), email: email.trim().toLowerCase(), role: invRole }])
+    setSaving(true)
+
+    const result = await withApiError(
+      () => supabase.from('users').insert([{
+        company_id: activeCompany.id,
+        email: validEmail,
+        role: invRole,
+      }]),
+      '[Team] invite'
+    )
+
+    if (result.success) {
+      toast(`✓ ${validEmail} invited as ${invRole}`)
+      setMembers(prev => [...prev, { id: Date.now(), email: validEmail, role: invRole, name: sanitizeName(invName.trim()) }])
     } else {
-      toast('Could not invite — they may already be a member')
+      toast(result.error.message)
     }
-    setEmail(''); setInvName(''); setInvRole('employee')
-    setShowInvite(false); setSaving(false)
+
+    setEmail('')
+    setInvName('')
+    setInvRole('employee')
+    setShowInvite(false)
+    setSaving(false)
   }
 
   const changeRole = async (id, newRole) => {
     if (!isOwner) { toast('Only the owner can change roles'); return }
-    const { error } = await supabase.from('users').update({ role: newRole }).eq('id', id)
-    if (!error) {
+
+    const result = await withApiError(
+      () => supabase.from('users').update({ role: newRole }).eq('id', id),
+      '[Team] changeRole'
+    )
+
+    if (result.success) {
       setMembers(prev => prev.map(m => m.id === id ? { ...m, role: newRole } : m))
       toast('✓ Role updated')
     } else {
-      toast('Failed to update role')
+      toast(result.error.message)
     }
   }
 
@@ -84,9 +101,18 @@ export default function Team() {
     if (!isOwner) { toast('Only the owner can remove members'); return }
     if (email === user?.email) { toast("You can't remove yourself"); return }
     if (!confirm(`Remove ${email}?`)) return
-    await supabase.from('users').delete().eq('id', id).catch(() => {})
-    setMembers(prev => prev.filter(m => m.id !== id))
-    toast('Member removed')
+
+    const result = await withApiError(
+      () => supabase.from('users').delete().eq('id', id),
+      '[Team] remove'
+    )
+
+    if (result.success) {
+      setMembers(prev => prev.filter(m => m.id !== id))
+      toast('Member removed')
+    } else {
+      toast(result.error.message)
+    }
   }
 
   return (

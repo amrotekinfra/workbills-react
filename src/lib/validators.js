@@ -11,8 +11,8 @@ export const sanitizeText = (text, maxLength = 255) => {
   return String(text)
     .trim()
     .slice(0, maxLength)
-    .replace(/[<>\"']/g, char => {
-      const map = { '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
+    .replace(/[&<>\"']/g, char => {
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
       return map[char]
     })
 }
@@ -44,7 +44,7 @@ export const validateSlug = (slug) => {
  * @returns {number} Valid amount or 0 if invalid
  */
 export const validateAmount = (amount) => {
-  const num = parseFloat(amount)
+  const num = parseFloat(String(amount).replace(/,/g, ''))
   return isNaN(num) || num <= 0 ? 0 : num
 }
 
