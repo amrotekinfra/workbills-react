@@ -10,6 +10,7 @@ import {
   Validators
 } from '../lib/validators'
 
+
 describe('Validators', () => {
   describe('sanitizeText', () => {
     test('escapes HTML tags', () => {
