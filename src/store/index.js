@@ -55,6 +55,12 @@ export const useStore = create((set, get) => ({
   patchEntry:  (id, patch) => set(s => ({ entries: s.entries.map(e => e.id === id ? { ...e, ...patch } : e) })),
   dropEntry:   id => set(s => ({ entries: s.entries.filter(e => e.id !== id) })),
   setCustomCats: c => set({ customCats: c }),
+  
+  incomes:     [],
+  setIncomes:  inc  => set({ incomes: inc }),
+  addIncome:   inc  => set(s => ({ incomes: [inc, ...s.incomes] })),
+  patchIncome: (id, patch) => set(s => ({ incomes: s.incomes.map(i => i.id === id ? { ...i, ...patch } : i) })),
+  dropIncome:  id   => set(s => ({ incomes: s.incomes.filter(i => i.id !== id) })),
 
   // UI
   panel:       'entries',

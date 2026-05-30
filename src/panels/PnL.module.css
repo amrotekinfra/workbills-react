@@ -1,0 +1,362 @@
+.panel { padding-bottom: 80px; }
+
+/* ── Empty state ─────────────────────────────────────────────── */
+.empty       { text-align: center; padding: 60px 24px; }
+.emptyIcon   { font-size: 56px; margin-bottom: 14px; }
+.emptyTitle  { font-size: 18px; font-weight: 800; color: var(--txt); margin-bottom: 8px; }
+.emptyHint   { font-size: 14px; color: var(--txt3); margin-bottom: 20px; line-height: 1.6; }
+
+/* ── Period selector ─────────────────────────────────────────── */
+.periods {
+  display: flex;
+  gap: 6px;
+  padding: 12px 14px 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.periods::-webkit-scrollbar { display: none; }
+.periodBtn {
+  padding: 7px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--txt3);
+  background: white;
+  cursor: pointer;
+  font-family: var(--ff);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all var(--trans-fast);
+}
+.periodBtnOn { background: var(--brand); border-color: var(--brand); color: white; }
+
+/* ── Hero P&L card ───────────────────────────────────────────── */
+.heroCard {
+  margin: 0 14px 14px;
+  border-radius: var(--r-lg, 16px);
+  padding: 20px 18px;
+  border: 1.5px solid transparent;
+  box-shadow: var(--shadow-md);
+}
+.heroProfit {
+  background: linear-gradient(135deg, #0f4b35 0%, #1a7a55 100%);
+  border-color: #16a34a;
+}
+.heroLoss {
+  background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+  border-color: #ef4444;
+}
+.heroLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,.75);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.heroVal {
+  font-size: 34px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.heroSub {
+  font-size: 13px;
+  color: rgba(255,255,255,.7);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* Stack bar */
+.heroBar {
+  height: 8px;
+  background: rgba(255,255,255,.2);
+  border-radius: 100px;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 16px;
+}
+.heroBarInc { background: rgba(255,255,255,.9); border-radius: 100px 0 0 100px; }
+.heroBarExp { background: rgba(255,255,255,.35); border-radius: 0 100px 100px 0; }
+
+.heroRow     { display: flex; gap: 0; }
+.heroCol     { flex: 1; text-align: center; }
+.heroDivider { width: 1px; background: rgba(255,255,255,.2); margin: 4px 0; }
+.heroColVal  { font-size: 16px; font-weight: 800; }
+.heroColLbl  { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.65); margin-top: 2px; text-transform: uppercase; letter-spacing: .4px; }
+
+.pendingNote {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,.7);
+  background: rgba(255,255,255,.1);
+  border-radius: 6px;
+  padding: 7px;
+}
+
+/* Semantic colors (for use inside and outside hero) */
+.kpiGrn { color: #4ade80; }
+.kpiRed { color: #fca5a5; }
+
+/* Outside hero card — dark readable */
+.section .kpiGrn,
+.projCard .kpiGrn,
+.detailKpis .kpiGrn { color: #16a34a; }
+.section .kpiRed,
+.projCard .kpiRed,
+.detailKpis .kpiRed { color: #dc2626; }
+
+/* ── Nav row ─────────────────────────────────────────────────── */
+.navRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 0 14px 14px;
+}
+.navBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 8px;
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: var(--rs);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--txt2);
+  font-family: var(--ff);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  text-align: center;
+}
+.navBtn:hover { border-color: var(--brand); color: var(--brand-d); background: var(--brand-lt); }
+
+/* ── Sections ────────────────────────────────────────────────── */
+.section {
+  background: white;
+  border-top: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 10px;
+}
+.secHdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--border2);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: var(--txt3);
+}
+.secRight   { display: flex; align-items: center; gap: 8px; }
+.secTotal   { font-size: 13px; font-weight: 800; color: var(--txt); letter-spacing: -.3px; text-transform: none; }
+.secLink    {
+  font-size: 12px; font-weight: 700; color: var(--brand);
+  background: none; border: none; cursor: pointer; font-family: var(--ff);
+  text-transform: none; letter-spacing: 0;
+}
+
+/* ── Category rows ───────────────────────────────────────────── */
+.catRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border2);
+}
+.catRow:last-child  { border-bottom: none; }
+.catRowIcon         { font-size: 18px; flex-shrink: 0; width: 26px; text-align: center; }
+.catDotSm           { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.catRowMid          { flex: 1; min-width: 0; }
+.catRowName         { font-size: 13px; font-weight: 600; color: var(--txt); margin-bottom: 5px; }
+.catRowBar          { height: 5px; background: var(--bg); border-radius: 100px; overflow: hidden; }
+.catRowFillInc      { height: 100%; background: #16a34a; border-radius: 100px; transition: width .3s; }
+.catRowFillExp      { height: 100%; border-radius: 100px; transition: width .3s; }
+.catRowRight        { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+.catRowAmt          { font-size: 14px; font-weight: 800; color: var(--txt); }
+.catRowPct          { font-size: 10px; font-weight: 700; color: var(--txt4); }
+
+/* ── Mini donut ──────────────────────────────────────────────── */
+.donut { width: 32px; height: 32px; }
+
+/* ── Margin bar ──────────────────────────────────────────────── */
+.marginBarWrap  { display: flex; align-items: center; gap: 8px; }
+.marginBarTrack { flex: 1; height: 6px; background: var(--bg); border-radius: 100px; overflow: hidden; }
+.marginBarFill  { height: 100%; border-radius: 100px; transition: width .4s ease; }
+.barGrn         { background: #22c55e; }
+.barRed         { background: #ef4444; }
+.marginPct      { font-size: 12px; font-weight: 800; flex-shrink: 0; min-width: 44px; text-align: right; }
+.pctGrn         { color: #16a34a; }
+.pctRed         { color: #dc2626; }
+
+/* ── Project mini-cards (summary) ────────────────────────────── */
+.miniProjRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border2);
+  cursor: pointer;
+  transition: background var(--trans-fast);
+}
+.miniProjRow:hover  { background: var(--bg); }
+.miniProjRow:last-child { border-bottom: none; }
+.mpLabel  { flex: 1; font-size: 13px; font-weight: 600; color: var(--txt); }
+.mpRight  { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.mpProfit { font-size: 14px; font-weight: 800; }
+.mpMargin { font-size: 11px; font-weight: 700; }
+.mpChev   { font-size: 18px; color: var(--txt4); }
+
+/* ── Project cards (project view) ────────────────────────────── */
+.viewHdr {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 14px 12px;
+  border-bottom: 1px solid var(--border2);
+}
+.viewTitle { font-size: 16px; font-weight: 800; color: var(--txt); }
+.backBtn {
+  background: none; border: none;
+  font-size: 14px; font-weight: 700;
+  color: var(--brand); cursor: pointer;
+  font-family: var(--ff); padding: 0; flex-shrink: 0;
+}
+.noProj {
+  text-align: center; padding: 32px 24px;
+  font-size: 14px; color: var(--txt3); font-weight: 500; line-height: 1.6;
+}
+
+.projCard {
+  background: white;
+  border-bottom: 1px solid var(--border2);
+  padding: 14px 14px 10px;
+  cursor: pointer;
+  transition: background var(--trans-fast);
+}
+.projCard:hover { background: var(--bg); }
+.projCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+.projName    { font-size: 14px; font-weight: 700; color: var(--txt); flex: 1; }
+.projProfit  { font-size: 16px; font-weight: 900; letter-spacing: -.4px; flex-shrink: 0; }
+.projMiniRow { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.projInc     { font-size: 12px; font-weight: 600; color: #16a34a; }
+.projExp     { font-size: 12px; font-weight: 600; color: var(--txt3); }
+.projMrgGrn  { font-size: 11px; font-weight: 700; color: #16a34a; }
+.projMrgRed  { font-size: 11px; font-weight: 700; color: #dc2626; }
+.projFooter  { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 11px; color: var(--txt4); font-weight: 600; }
+.projChev    { font-size: 18px; }
+
+/* ── Detail view ─────────────────────────────────────────────── */
+.detailHdr {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 14px 12px;
+  border-bottom: 1px solid var(--border2);
+}
+.detailTitle { font-size: 16px; font-weight: 800; color: var(--txt); flex: 1; }
+
+.detailKpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 14px 14px 10px;
+}
+.dKpi {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.dKpiVal { font-size: 15px; font-weight: 800; letter-spacing: -.3px; color: var(--txt); }
+.dKpiLbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--txt3); margin-top: 3px; }
+
+.detailMarginCard {
+  margin: 0 14px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg);
+  border-radius: var(--rs);
+  border: 1px solid var(--border);
+}
+.dmLabel { font-size: 11px; font-weight: 700; color: var(--txt3); white-space: nowrap; }
+
+.detailSection {
+  background: white;
+  border-top: 1px solid var(--border2);
+  margin-top: 4px;
+}
+.dSecHdr {
+  padding: 10px 14px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: var(--txt3);
+  border-bottom: 1px solid var(--border2);
+}
+.detailEmpty { padding: 20px 14px; font-size: 13px; color: var(--txt3); text-align: center; }
+
+.detailRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border2);
+}
+.detailRow:last-child { border-bottom: none; }
+.drLeft   { width: 72px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; }
+.drDate   { font-size: 11px; font-weight: 700; color: var(--txt3); }
+.drBadge  { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 2px 5px; border-radius: 4px; display: inline-block; }
+.drBadgeInc { background: var(--green-lt); color: #065f46; }
+.drMid    { flex: 1; min-width: 0; }
+.drClient { font-size: 13px; font-weight: 700; color: var(--txt); }
+.drDesc   { font-size: 11px; color: var(--txt3); margin-top: 2px; }
+.drAmt    { font-size: 14px; font-weight: 800; flex-shrink: 0; }
+.drAmtInc { color: #16a34a; }
+
+.catDetailRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border2);
+}
+.catDetailRow:last-child { border-bottom: none; }
+.catDot    { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.catName   { flex: 1; font-size: 13px; font-weight: 600; color: var(--txt); }
+.catAmt    { font-size: 14px; font-weight: 800; color: var(--txt); }
+.catPct    { font-size: 11px; font-weight: 700; width: 36px; text-align: right; }
+
+/* ── Desktop ─────────────────────────────────────────────────── */
+@media (min-width: 720px) {
+  .periods      { padding: 14px 20px 10px; }
+  .heroCard     { margin: 0 20px 14px; }
+  .navRow       { padding: 0 20px 14px; }
+  .section      { }
+  .secHdr       { padding: 10px 20px 8px; }
+  .catRow       { padding: 10px 20px; }
+  .miniProjRow  { padding: 12px 20px; }
+  .viewHdr, .detailHdr { padding: 16px 20px 12px; }
+  .detailKpis   { padding: 14px 20px 10px; gap: 12px; }
+  .detailMarginCard { margin: 0 20px 12px; }
+  .dSecHdr      { padding: 10px 20px 8px; }
+  .detailRow, .catDetailRow { padding: 11px 20px; }
+  .projCard     { padding: 15px 20px 11px; }
+}

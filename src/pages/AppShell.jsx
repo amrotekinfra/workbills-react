@@ -22,6 +22,11 @@ import WA         from '../panels/WA'
 import SharePanel from '../panels/Share'
 import StubPanel  from '../panels/StubPanel'
 import s from './AppShell.module.css'
+import Invoice    from '../panels/Invoice'
+import Inventory from '../panels/Inventory' 
+import AddIncome  from '../panels/AddIncome'
+import IncomeLedger from '../panels/IncomeLedger'
+import PnL        from '../panels/PnL'
 
 const NAV_ITEMS = [
   { id:'add',       icon:'＋', label:'Add Entry',    primary: true },
@@ -38,6 +43,11 @@ const NAV_ITEMS = [
   { id:'ai',        icon:'🤖', label:'AI Assistant',   group:'tools' },
   { id:'wa',        icon:'💬', label:'WhatsApp',       group:'tools' },
   { id:'share',     icon:'🔗', label:'Share Report',   group:'tools' },
+  { id:'invoice', icon:'📄', label:'Invoice',    group:'tools' },
+  { id:'inventory', icon:'📦', label:'Inventory',  group:'manage' },
+  { id:'addincome',  icon:'💰', label:'Add Income',     group:'income' },
+  { id:'income',     icon:'📒', label:'Income Ledger',  group:'income' },
+  { id:'pnl',        icon:'📊', label:'P&L',            group:'income' },
 ]
 
 const BOTTOM_NAV = [
@@ -104,6 +114,11 @@ export default function AppShell() {
       case 'ai':        return <AI />
       case 'wa':        return <WA />
       case 'share':     return <SharePanel />
+      case 'invoice': return <Invoice />   
+      case 'inventory': return <Inventory /> 
+      case 'addincome': return <AddIncome />
+      case 'income':    return <IncomeLedger />
+      case 'pnl':       return <PnL />
       default:          return <StubPanel id={panel} />
     }
   }
@@ -125,8 +140,9 @@ export default function AppShell() {
   const groups = [
     { label:'', ids: ['add'] },
     { label:'Track', ids: ['entries','summary','dash'] },
-    { label:'Manage', ids: ['approvals','budget','templates','projects','subs','team','cats'] },
-    { label:'Tools', ids: ['ai','wa','share'] },
+    { label:'Manage', ids: ['approvals','budget','templates','projects','subs','vendors','inventory','team','cats'] },    { label:'Tools', ids: ['ai','wa','share'] },
+    { label:'Tools', ids: ['ai','wa','share','invoice'] },
+    { label:'Income', ids: ['addincome','income','pnl']        },
   ]
 
   return (

@@ -1,0 +1,275 @@
+.panel { padding-bottom: 80px; }
+
+/* ── Empty state ─────────────────────────────────────────────── */
+.empty       { text-align: center; padding: 60px 24px; }
+.emptyIcon   { font-size: 56px; margin-bottom: 14px; }
+.emptyTitle  { font-size: 18px; font-weight: 800; color: var(--txt); margin-bottom: 8px; }
+.emptyHint   { font-size: 14px; color: var(--txt3); margin-bottom: 20px; line-height: 1.6; }
+
+/* ── KPI strip ───────────────────────────────────────────────── */
+.kpiStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 14px 14px 10px;
+}
+@media (max-width: 380px) {
+  .kpiStrip { grid-template-columns: 1fr 1fr; }
+}
+.kpiCard {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.kpiVal  { font-size: 14px; font-weight: 800; color: var(--txt); letter-spacing: -.3px; }
+.kpiLbl  { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--txt3); margin-top: 3px; }
+.kpiGrn  { color: var(--green); }
+.kpiAmb  { color: var(--accent); }
+
+/* ── Type breakdown chips ────────────────────────────────────── */
+.typeBreakRow {
+  display: flex;
+  gap: 6px;
+  padding: 0 14px 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.typeBreakRow::-webkit-scrollbar { display: none; }
+.typeBreakChip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 11px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--trans-fast);
+  white-space: nowrap;
+}
+.typeBreakChip:hover { background: var(--bg); }
+.tbLabel { color: var(--txt3); font-weight: 600; }
+.tbAmt   { color: var(--brand-d); font-weight: 800; }
+
+/* ── Search ──────────────────────────────────────────────────── */
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 14px 10px;
+  padding: 10px 14px;
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: var(--rs);
+  transition: border-color var(--trans-fast);
+}
+.searchBar:focus-within { border-color: var(--brand); }
+.searchIn {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: var(--ff);
+  background: transparent;
+  color: var(--txt);
+}
+.clr    { font-size: 12px; color: var(--txt3); background: none; border: none; cursor: pointer; padding: 2px; }
+.refBtn { font-size: 16px; background: none; border: none; cursor: pointer; color: var(--txt3); padding: 2px; }
+
+/* ── Month chips ─────────────────────────────────────────────── */
+.chips {
+  display: flex;
+  gap: 6px;
+  padding: 0 14px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  padding: 5px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--txt3);
+  background: white;
+  cursor: pointer;
+  font-family: var(--ff);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all var(--trans-fast);
+}
+.chipOn { background: var(--brand); border-color: var(--brand); color: white; }
+
+/* ── Filter groups ───────────────────────────────────────────── */
+.filterRow    { padding: 0 14px 10px; display: flex; flex-direction: column; gap: 8px; }
+.filterGroup  { display: flex; align-items: flex-start; gap: 8px; }
+.filterLabel  {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--txt3);
+  padding-top: 7px;
+  flex-shrink: 0;
+  width: 44px;
+}
+.filterPills  { display: flex; gap: 5px; flex-wrap: wrap; }
+.fp {
+  padding: 5px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--txt3);
+  background: white;
+  cursor: pointer;
+  font-family: var(--ff);
+  white-space: nowrap;
+  transition: all var(--trans-fast);
+}
+.fpOn { background: var(--brand); border-color: var(--brand); color: white; }
+
+/* ── Add / PnL buttons ───────────────────────────────────────── */
+.addBtnRow {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 12px;
+}
+.addBtn {
+  flex: 1;
+  padding: 10px;
+  background: var(--brand);
+  color: white;
+  border: none;
+  border-radius: var(--rs);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--ff);
+  cursor: pointer;
+  transition: opacity var(--trans-fast);
+}
+.addBtn:hover { opacity: .9; }
+.plBtn {
+  padding: 10px 14px;
+  background: var(--accent-lt);
+  border: 1.5px solid var(--accent-md);
+  border-radius: var(--rs);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-d);
+  font-family: var(--ff);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  white-space: nowrap;
+}
+.plBtn:hover { background: var(--accent-md); }
+
+/* ── No match ────────────────────────────────────────────────── */
+.noMatch {
+  text-align: center;
+  padding: 40px 24px;
+  font-size: 14px;
+  color: var(--txt3);
+  font-weight: 500;
+}
+
+/* ── Day group ───────────────────────────────────────────────── */
+.dayGroup { border-bottom: 1px solid var(--border2); }
+.dayHdr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 6px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border2);
+}
+.dayLabel { font-size: 12px; font-weight: 700; color: var(--txt2); flex: 1; }
+.dayDate  { font-size: 11px; color: var(--txt3); font-weight: 600; }
+.dayTotal { font-size: 13px; font-weight: 800; color: var(--green); }
+
+/* ── Income row ──────────────────────────────────────────────── */
+.incRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border2);
+  background: white;
+  transition: background var(--trans-fast);
+}
+.incRow:hover    { background: var(--bg); }
+.incRow:last-child { border-bottom: none; }
+
+.incIcon {
+  font-size: 22px;
+  flex-shrink: 0;
+  width: 36px;
+  text-align: center;
+  padding-top: 2px;
+}
+
+.incMain  { flex: 1; min-width: 0; }
+.incClient {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--txt);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.incMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 3px;
+}
+.incType { font-size: 11px; font-weight: 600; color: var(--txt3); }
+.incBill { font-size: 11px; font-weight: 700; color: var(--brand-d); background: var(--brand-lt); padding: 1px 6px; border-radius: 4px; }
+.incProj { font-size: 11px; color: var(--txt3); }
+.incDesc { font-size: 12px; color: var(--txt3); margin-top: 2px; line-height: 1.4; }
+
+.incRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.incAmt { font-size: 16px; font-weight: 900; color: var(--green); letter-spacing: -.4px; }
+
+.incBadgeRow { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.badge_received { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: var(--green-lt); color: #065f46; }
+.badge_pending  { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: #fefce8; color: #713f12; }
+.badge_partial  { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: var(--accent-lt); color: var(--accent-d); }
+.payMode        { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: var(--bg); color: var(--txt3); border: 1px solid var(--border); }
+
+.incActions { display: flex; gap: 4px; }
+.editBtn {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--trans-fast);
+}
+.editBtn:hover { background: var(--border2); }
+.delBtn {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  background: var(--red-lt);
+  border: 1px solid #fecaca;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--trans-fast);
+}
+.delBtn:hover { background: #fecaca; }
